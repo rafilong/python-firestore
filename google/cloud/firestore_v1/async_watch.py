@@ -68,6 +68,7 @@ class AsyncWatch(BaseWatch):
             snapshot_callback,
             document_snapshot_cls,
             document_reference_cls,
+            firestore._firestore_api._client._transport,
             BackgroundConsumer=BackgroundConsumer,
             ResumableBidiRpc=ResumableBidiRpc,
         )

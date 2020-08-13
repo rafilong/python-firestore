@@ -177,6 +177,7 @@ class BaseWatch(object):
         snapshot_callback,
         document_snapshot_cls,
         document_reference_cls,
+        transport,
         BackgroundConsumer=None,  # FBO unit testing
         ResumableBidiRpc=None,  # FBO unit testing
     ):
@@ -216,7 +217,7 @@ class BaseWatch(object):
             ResumableBidiRpc = self.ResumableBidiRpc  # FBO unit tests
 
         self._rpc = ResumableBidiRpc(
-            self._api._transport.listen,
+            transport.listen,
             should_recover=_should_recover,
             should_terminate=_should_terminate,
             initial_request=rpc_request,
