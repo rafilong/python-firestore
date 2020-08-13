@@ -433,6 +433,12 @@ class TestAsyncQuery(aiounittest.AsyncTestCase):
             metadata=client._rpc_metadata,
         )
 
+    @mock.patch("google.cloud.firestore_v1.async_query.AsyncWatch", autospec=True)
+    def test_on_snapshot(self, watch):
+        query = self._make_one(mock.sentinel.parent)
+        query.on_snapshot(None)
+        watch.for_query.assert_called_once()
+
 
 def _make_client(project="project-project"):
     from google.cloud.firestore_v1.async_client import AsyncClient
