@@ -12,10 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.cloud.firestore_v1.types import firestore
-
-from google.cloud.firestore_v1.base_watch import (
+from google.cloud.firestore_v1.base_watch import (  # noqa: F401
     WATCH_TARGET_ID,
+    _RPC_ERROR_THREAD_NAME,
+    _should_recover,
+    _should_terminate,
+    _maybe_wrap_exception,
+    document_watch_comparator,
+    WatchDocTree,
+    WatchResult,
+    ChangeType,
+    DocumentChange,
     BaseWatch,
 )
 
