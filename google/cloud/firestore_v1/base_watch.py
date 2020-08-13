@@ -121,7 +121,6 @@ class ChangeType(Enum):
 class DocumentChange(object):
     def __init__(self, type, document, old_index, new_index):
         """DocumentChange
-
         Args:
             type (ChangeType):
             document (document.DocumentSnapshot):
@@ -164,7 +163,7 @@ def _should_terminate(exception):
     return isinstance(wrapped, _TERMINATING_STREAM_EXCEPTIONS)
 
 
-class Watch(object):
+class BaseWatch(object):
 
     BackgroundConsumer = BackgroundConsumer  # FBO unit tests
     ResumableBidiRpc = ResumableBidiRpc  # FBO unit tests
@@ -195,7 +194,6 @@ class Watch(object):
                         this watch.
                     read_time (string): The ISO 8601 time at which this
                         snapshot was obtained.
-
             document_snapshot_cls: instance of DocumentSnapshot
             document_reference_cls: instance of DocumentReference
         """
@@ -266,7 +264,6 @@ class Watch(object):
     @property
     def is_active(self):
         """bool: True if this manager is actively streaming.
-
         Note that ``False`` does not indicate this is complete shut down,
         just that it stopped getting new messages.
         """
@@ -274,9 +271,7 @@ class Watch(object):
 
     def close(self, reason=None):
         """Stop consuming messages and shutdown all helper threads.
-
         This method is idempotent. Additional calls will have no effect.
-
         Args:
             reason (Any): The reason to close this. If None, this is considered
                 an "intentional" shutdown.
@@ -305,11 +300,9 @@ class Watch(object):
 
     def _on_rpc_done(self, future):
         """Triggered whenever the underlying RPC terminates without recovery.
-
         This is typically triggered from one of two threads: the background
         consumer thread (when calling ``recv()`` produces a non-recoverable
         error) or the grpc management thread (when cancelling the RPC).
-
         This method is *non-blocking*. It will start another thread to deal
         with shutting everything down. This is to prevent blocking in the
         background consumer and preventing it from being ``joined()``.
@@ -337,7 +330,6 @@ class Watch(object):
         Creates a watch snapshot listener for a document. snapshot_callback
         receives a DocumentChange object, but may also start to get
         targetChange and such soon
-
         Args:
             document_ref: Reference to Document
             snapshot_callback: callback to be called on snapshot
@@ -345,7 +337,6 @@ class Watch(object):
                 snapshots with to pass to snapshot_callback
             reference_class_instance: instance of DocumentReference to make
                 references
-
         """
         return cls(
             document_ref,
@@ -425,7 +416,6 @@ class Watch(object):
         Called everytime there is a response from listen. Collect changes
         and 'push' the changes in a batch to the customer when we receive
         'current' from the listen response.
-
         Args:
             listen_response(`google.cloud.firestore_v1.types.ListenResponse`):
                 Callback method that receives a object to
@@ -551,7 +541,7 @@ class Watch(object):
         Assembles a new snapshot from the current set of changes and invokes
         the user's callback. Clears the current changes on completion.
         """
-        deletes, adds, updates = Watch._extract_changes(
+        deletes, adds, updates = BaseWatch._extract_changes(
             self.doc_map, self.change_map, read_time
         )
 
@@ -718,7 +708,9 @@ class Watch(object):
         Returns the current count of all documents, including the changes from
         the current changeMap.
         """
-        deletes, adds, _ = Watch._extract_changes(self.doc_map, self.change_map, None)
+        deletes, adds, _ = BaseWatch._extract_changes(
+            self.doc_map, self.change_map, None
+        )
         return len(self.doc_map) + len(adds) - len(deletes)
 
     def _reset_docs(self):

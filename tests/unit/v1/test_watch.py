@@ -231,7 +231,7 @@ class TestWatch(unittest.TestCase):
 
         inst = self._makeOne()
         threading = DummyThreading()
-        with mock.patch("google.cloud.firestore_v1.watch.threading", threading):
+        with mock.patch("google.cloud.firestore_v1.base_watch.threading", threading):
             inst._on_rpc_done(True)
         self.assertTrue(threading.threads[_RPC_ERROR_THREAD_NAME].started)
 
@@ -290,12 +290,13 @@ class TestWatch(unittest.TestCase):
         document_reference_class_instance = DummyDocumentReference
         client = DummyFirestore()
         parent = DummyCollection(client)
-        modulename = "google.cloud.firestore_v1.watch"
+        modulename = "google.cloud.firestore_v1.base_watch"
         pb2 = DummyPb2()
         with mock.patch("%s.firestore" % modulename, pb2):
-            with mock.patch("%s.Watch.ResumableBidiRpc" % modulename, DummyRpc):
+            with mock.patch("%s.BaseWatch.ResumableBidiRpc" % modulename, DummyRpc):
                 with mock.patch(
-                    "%s.Watch.BackgroundConsumer" % modulename, DummyBackgroundConsumer
+                    "%s.BaseWatch.BackgroundConsumer" % modulename,
+                    DummyBackgroundConsumer,
                 ):
                     query = DummyQuery(parent=parent)
                     inst = Watch.for_query(
@@ -318,12 +319,13 @@ class TestWatch(unittest.TestCase):
         root = DummyCollection(client)
         grandparent = DummyDocument("document", parent=root)
         parent = DummyCollection(client, parent=grandparent)
-        modulename = "google.cloud.firestore_v1.watch"
+        modulename = "google.cloud.firestore_v1.base_watch"
         pb2 = DummyPb2()
         with mock.patch("%s.firestore" % modulename, pb2):
-            with mock.patch("%s.Watch.ResumableBidiRpc" % modulename, DummyRpc):
+            with mock.patch("%s.BaseWatch.ResumableBidiRpc" % modulename, DummyRpc):
                 with mock.patch(
-                    "%s.Watch.BackgroundConsumer" % modulename, DummyBackgroundConsumer
+                    "%s.BaseWatch.BackgroundConsumer" % modulename,
+                    DummyBackgroundConsumer,
                 ):
                     query = DummyQuery(parent=parent)
                     inst = Watch.for_query(
