@@ -81,6 +81,7 @@ def default(session, test_dir, ignore_dir=None):
     session.install("pytest-asyncio", "aiounittest")
 
     session.install("mock", "pytest", "pytest-cov")
+    session.install("-e", "../python-api-core/")
     session.install("-e", ".")
 
     # Run py.test against the unit tests.
@@ -135,6 +136,7 @@ def system(session):
         "mock", "pytest", "pytest-asyncio", "google-cloud-testutils",
     )
     session.install("-e", ".")
+    session.install("-e", "../python-api-core/")
 
     # Run py.test against the system tests.
     if system_test_exists:

@@ -18,8 +18,8 @@ import threading
 from enum import Enum
 import functools
 
-from google.api_core.bidi import ResumableBidiRpc  # type: ignore
-from google.api_core.bidi import BackgroundConsumer  # type: ignore
+from google.api_core.async_bidi import AsyncResumableBidiRpc  # type: ignore
+from google.api_core.async_bidi import AsyncBackgroundConsumer  # type: ignore
 from google.cloud.firestore_v1.types import firestore
 from google.cloud.firestore_v1 import _helpers
 
@@ -165,8 +165,8 @@ def _should_terminate(exception):
 
 class BaseWatch(object):
 
-    BackgroundConsumer = BackgroundConsumer  # FBO unit tests
-    ResumableBidiRpc = ResumableBidiRpc  # FBO unit tests
+    BackgroundConsumer = AsyncBackgroundConsumer  # FBO unit tests
+    ResumableBidiRpc = AsyncResumableBidiRpc  # FBO unit tests
 
     def __init__(
         self,
